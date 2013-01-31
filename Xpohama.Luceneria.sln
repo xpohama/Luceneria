@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xpohama.Luceneria", "Xpohama.Luceneria\Xpohama.Luceneria.csproj", "{4C55E602-1C6C-4396-A118-70BA9A93FD97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{3C30F972-B89A-447F-85A9-4D1FC1ED1F85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xpohama.Luceneria.Test", "Xpohama.Luceneria.Test\Xpohama.Luceneria.Test.csproj", "{BA54C71A-0E3F-4C4F-9778-80944738B5BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C55E602-1C6C-4396-A118-70BA9A93FD97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C55E602-1C6C-4396-A118-70BA9A93FD97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C55E602-1C6C-4396-A118-70BA9A93FD97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C55E602-1C6C-4396-A118-70BA9A93FD97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA54C71A-0E3F-4C4F-9778-80944738B5BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA54C71A-0E3F-4C4F-9778-80944738B5BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA54C71A-0E3F-4C4F-9778-80944738B5BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA54C71A-0E3F-4C4F-9778-80944738B5BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
