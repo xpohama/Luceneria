@@ -90,14 +90,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\IKVM\IKVM.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="tika-app-1.3">
+      <HintPath>..\lib\tika-app-1.3.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Xpohama.Luceneria.Test\Configuration.cs" />
     <Compile Include="Xpohama.Luceneria.Test\ILuceneFacade.cs" />
+    <Compile Include="Xpohama.Luceneria.Test\Indexer.cs" />
     <Compile Include="Xpohama.Luceneria.Test\LuceneTest.cs" />
+    <Compile Include="Xpohama.Tikeria.Test\BodyTextExtractor.cs" />
+    <Compile Include="Xpohama.Tikeria.Test\TextExtractor.cs" />
     <Compile Include="Xpohama.Tikeria.Test\TikaDriverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecificationExtensions.cs" />
+    <Compile Include="Xpohama.Tikeria.Test\TikaExtractTextTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xpohama.Luceneria\Xpohama.Luceneria.csproj">

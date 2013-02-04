@@ -22,7 +22,7 @@ using Exception = System.Exception;
 using String = System.String;
 using StringBuilder = System.Text.StringBuilder;
 
-namespace Xpohama.Tikeria {
+namespace Xpohama.Tikeria.Tests {
    public class TextExtractor {
         private StringWriter _outputWriter;
 
@@ -39,7 +39,7 @@ namespace Xpohama.Tikeria {
             try {
                 var file = new File(filePath);
                 var url = file.toURI().toURL();
-                using (InputStream inputStream = TikaInputStream.get(url, metadata)) {
+                using (var inputStream = TikaInputStream.get(url, metadata)) {
                     parser.parse(inputStream, getTransformerHandler(), metadata, parseContext);
                     inputStream.close();
                 }
@@ -50,7 +50,7 @@ namespace Xpohama.Tikeria {
             }
         }
 
-        private static TextExtractionResult assembleExtractionResult(string text, Metadata metadata) {
+        private TextExtractionResult assembleExtractionResult(string text, Metadata metadata) {
             Dictionary<string, string> metaDataResult = metadata.names().ToDictionary(name => name,
                                                                                       name =>
                                                                                       String.Join(", ", metadata.getValues(name)));
@@ -66,7 +66,7 @@ namespace Xpohama.Tikeria {
 
         private TransformerHandler getTransformerHandler() {
             var factory = TransformerFactory.newInstance() as SAXTransformerFactory;
-            TransformerHandler handler = factory.newTransformerHandler();
+            var handler = factory.newTransformerHandler();
             handler.getTransformer().setOutputProperty(OutputKeys.METHOD, "text");
             handler.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
 

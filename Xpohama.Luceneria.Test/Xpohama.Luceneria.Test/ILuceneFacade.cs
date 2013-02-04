@@ -45,8 +45,8 @@ namespace Xpohama.Luceneria.Tests {
             var indexReader = IndexReader.Open(directory, true);
             var indexSearch = new IndexSearcher(indexReader);
 
-            var analyzer = new StandardAnalyzer(global::Lucene.Net.Util.Version.LUCENE_29);
-            var parser = new MultiFieldQueryParser(global::Lucene.Net.Util.Version.LUCENE_29, allSearchableFieldsIncludingFiles, analyzer);
+            var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29);
+            var parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_29, allSearchableFieldsIncludingFiles, analyzer);
 
             var hits = indexSearch.Search(parser.Parse(query));
 
