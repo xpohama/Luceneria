@@ -7,10 +7,11 @@ using Lucene.Net.Util;
 using Lucene.Net.Analysis;
 using Lucene.Net.Search;
 
+
 namespace Xpohama.Luceneria.Tests {
 
-    public class Indexer {
-        Version Version { get { return Version.LUCENE_29; } }
+    public class Indexer:System.IDisposable {
+        public Version Version { get { return Version.LUCENE_29; } }
 
         public Indexer (Directory dir) {
             this.Directory = dir;
@@ -70,6 +71,7 @@ namespace Xpohama.Luceneria.Tests {
         }
 
         public void Close () {
+           
             if (_writer != null) {
                 _writer.Close();
                 _writer = null;
@@ -78,6 +80,7 @@ namespace Xpohama.Luceneria.Tests {
                 _reader.Close();
                 _reader = null;
             }
+            _searcher = null;
         }
 
         public void Refresh() {
@@ -85,12 +88,16 @@ namespace Xpohama.Luceneria.Tests {
             _searcher = null;
         }
         public string DocumentContentField { get { return "contents"; } }
-        public Document CreateDocument (System.Guid id, byte[] data) {
+        public Document CreateDocument (byte[] data) {
             var ex = new BodyTextExtractor();
             var doc = new Document();
             doc.Add(new Field(DocumentContentField, ex.ExtractText(data), Field.Store.NO, Field.Index.ANALYZED));
-            doc.Add(new Field("ID", id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
             return doc;
+        }
+
+        public void Dispose () {
+            Close();
         }
     }
 }

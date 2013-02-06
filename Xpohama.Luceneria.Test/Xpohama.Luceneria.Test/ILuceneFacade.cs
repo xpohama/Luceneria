@@ -9,6 +9,7 @@ using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
 using System;
 using System.Linq;
+using Lucene.Net.Documents;
 
 namespace Xpohama.Luceneria.Tests {
     public interface ILuceneFacade {
@@ -34,45 +35,42 @@ namespace Xpohama.Luceneria.Tests {
             get { return IndexBaseDirectoryName; }
         }
 
-        public void OpenIndex() {
-            
+        Indexer _indexer = null;
+        public Indexer Indexer {
+            get {
+                return _indexer ?? (_indexer = new Indexer(new RAMDirectory()));
+            }
         }
 
-        public IEnumerable<Guid> Query(string query) {
-            var directoryInfo = new DirectoryInfo(IndexDirectoryName);
-            var directory = FSDirectory.Open(directoryInfo);
+        public IEnumerable<Guid> Query (string query) {
+            var indexer = this.Indexer;
+            var parser = new MultiFieldQueryParser(Indexer.Version, allSearchableFieldsIncludingFiles, Indexer.Analyser);
 
-            var indexReader = IndexReader.Open(directory, true);
-            var indexSearch = new IndexSearcher(indexReader);
+            var ids = indexer.Searcher
+                .Search(parser.Parse(query), 1000)
+                .ScoreDocs
+                .Select(sd => indexer.Searcher.Doc(sd.Doc).GetField("Id").StringValue)
+                .Select(id => Guid.Parse(id.Contains(IdSeperator) ?
+                        id.Substring(0, id.IndexOf(IdSeperator) + 1) : id));
 
-            var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29);
-            var parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_29, allSearchableFieldsIncludingFiles, analyzer);
-
-            var hits = indexSearch.Search(parser.Parse(query));
-
-            var ids = new List<Guid>();
-            for (var i = 0; i < hits.Length(); i++) {
-                var doc = indexSearch.Doc(i);
-                var idString = doc.GetField("Id").StringValue();
-
-                if (idString.Contains(IdSeperator))
-                    idString = idString.Split(new[] { IdSeperator }, StringSplitOptions.None).First();
-
-                var id = Guid.Parse(idString);
-
-                if (!ids.Contains(id))
-                    ids.Add(Guid.Parse(idString));
-            }
 
             return ids;
         }
 
+        protected virtual string IdFromGuid(Guid id, Guid parentId) {
+            return parentId.ToString() + IdSeperator + id.ToString();
+        }
+
         public void AddIndexForFile(Guid id, Guid parentId, string contentType, byte[] binaryContent) {
-            throw new NotImplementedException();
+            var doc = Indexer.CreateDocument(binaryContent);
+            doc.Add(new Field("Id", IdFromGuid(id,parentId), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            Indexer.Writer.AddDocument(doc);
+            Indexer.Refresh();
         }
 
         public void RemoveIndexForFile(Guid id, Guid parentId) {
-            throw new NotImplementedException();
+            Indexer.Writer.DeleteDocuments(new Term("Id", IdFromGuid(id, parentId)));
+            Indexer.Refresh();
         }
 
         public string[] allSearchableFieldsIncludingFiles { get; set; }

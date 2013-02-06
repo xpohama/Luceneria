@@ -5,6 +5,8 @@ using Lucene.Net.Store;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
 using System.Linq;
+using System.Collections.Generic;
+using Lucene.Net.Documents;
 
 namespace Xpohama.Luceneria.Tests {
     [TestFixture]
@@ -24,42 +26,70 @@ namespace Xpohama.Luceneria.Tests {
         }
 
         Tuple<Guid,byte[]> ReadFile(string path) {
+            if (!File.Exists(path))
+                throw new ArgumentException(path + " does not exist");
             return Tuple.Create(Guid.NewGuid(), File.ReadAllBytes(path));
         }
 
 
-        public void IndexTest (Indexer indexer, string path, string contains) {
+        public Guid IndexTest (Indexer indexer, string path, string contains) {
             contains = contains.ToLower();
 
             var file = ReadFile(path);
 
-            var doc = indexer.CreateDocument(file.Item1, file.Item2);
+            var doc = indexer.CreateDocument(file.Item2);
+            doc.Add(new Field("Id", file.Item1.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             indexer.Writer.AddDocument(doc);
             indexer.Writer.Commit();
             indexer.Refresh();
 
             var query = new TermQuery(new Term(indexer.DocumentContentField, contains));
             var topDocs = indexer.Searcher.Search(query, 1000);
-            var docs = topDocs.scoreDocs
-                .Select(sd => indexer.Searcher.Doc(sd.doc))
+            //topDocs = indexer.Searcher.Search(query, topDocs.totalHits);
+            var docs = topDocs.ScoreDocs
+                .Select(sd => indexer.Searcher.Doc(sd.Doc))
                 .ToArray();
 
-            Assert.IsTrue(docs.Any(d => d.GetField("ID").StringValue() == file.Item1.ToString()));
-
+            Assert.IsTrue(docs.Any(d => d.GetField("Id").StringValue == file.Item1.ToString()));
+            return file.Item1;
         }
 
         [Test]
         public void IndexerTest () {
-            var indexer = new Indexer(this.Directory);
+            using (var indexer = new Indexer(this.Directory)) {
 
-            IndexTest(indexer, TestDir + "Tika.rtf", "almonds");
-            IndexTest(indexer, TestDir + "Tika.pdf", "almonds");
-            IndexTest(indexer, TestDir + "Tika.docx", "interesting");
-            IndexTest(indexer, TestDir + "Tika.odt", "interesting");
-            IndexTest(indexer, TestDir + "Tika.pptx", "Presentation");
-            IndexTest(indexer, TestDir + "Tika.xlsx", "duke");
+                var guids = new List<Guid>();
+                guids.Add(IndexTest(indexer, TestDir + "Tika.rtf", "almonds"));
+                guids.Add(IndexTest(indexer, TestDir + "Tika.pdf", "almonds"));
+                guids.Add(IndexTest(indexer, TestDir + "Tika.docx", "almonds"));
+                guids.Add(IndexTest(indexer, TestDir + "Tika.odt", "almonds"));
+                guids.Add(IndexTest(indexer, TestDir + "Tika.pptx", "almonds"));
+                guids.Add(IndexTest(indexer, TestDir + "Tika.xlsx", "almonds"));
 
-            indexer.Close();
+                foreach (var guid in guids) {
+                    indexer.Writer.DeleteDocuments(new Term("Id", guid.ToString()));
+                    indexer.Refresh();
+                    var docs = indexer.Searcher
+                        .Search(new TermQuery(new Term(indexer.DocumentContentField, "almonds")), 1000)
+                        .ScoreDocs
+                        .Select(sd => indexer.Searcher.Doc(sd.Doc))
+                        .ToArray();
+                    Assert.IsFalse(docs.Any(d => d.GetField("Id").StringValue == guid.ToString()));
+
+                }
+                
+            }
+        }
+
+
+        [Test]
+        public void IndexerGerTest () {
+            using (var indexer = new Indexer(this.Directory)) {
+                // TODO: use the right analyser here; document contains "donaudampfschiff...."
+                IndexTest(indexer, TestDir + "TikaGer.odt", "donau");
+
+            }
+
         }
 
         [Test]
