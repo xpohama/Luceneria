@@ -34,6 +34,12 @@
     <Reference Include="Lucene.Net">
       <HintPath>..\lib\Lucene.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net.Contrib.Analyzers">
+      <HintPath>..\lib\Lucene.Net.Contrib.Analyzers.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Contrib.Snowball">
+      <HintPath>..\lib\Lucene.Net.Contrib.Snowball.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -95,13 +101,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Xpohama.Luceneria.Test\Configuration.cs" />
-    <Compile Include="Xpohama.Luceneria.Test\ILuceneFacade.cs" />
-    <Compile Include="Xpohama.Luceneria.Test\Indexer.cs" />
     <Compile Include="Xpohama.Luceneria.Test\LuceneTest.cs" />
-    <Compile Include="Xpohama.Tikeria.Test\BodyTextExtractor.cs" />
-    <Compile Include="Xpohama.Tikeria.Test\TextExtractor.cs" />
-    <Compile Include="Xpohama.Tikeria.Test\TikaDriverTest.cs" />
+    <Compile Include="Xpohama.Tikeria.Test\TikaOnDotNet\TextExtractor.cs" />
+    <Compile Include="Xpohama.Tikeria.Test\TikaOnDotNet\TikaDriverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecificationExtensions.cs" />
     <Compile Include="Xpohama.Tikeria.Test\TikaExtractTextTest.cs" />

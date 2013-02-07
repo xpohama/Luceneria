@@ -7,6 +7,10 @@ using Lucene.Net.Index;
 using System.Linq;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Tokenattributes;
+using System.Diagnostics;
 
 namespace Xpohama.Luceneria.Tests {
     [TestFixture]
@@ -43,7 +47,8 @@ namespace Xpohama.Luceneria.Tests {
             indexer.Writer.Commit();
             indexer.Refresh();
 
-            var query = new TermQuery(new Term(indexer.DocumentContentField, contains));
+            var parser = new QueryParser(indexer.Version, indexer.DocumentContentField, indexer.Analyser);
+            var query = parser.Parse(contains);
             var topDocs = indexer.Searcher.Search(query, 1000);
             //topDocs = indexer.Searcher.Search(query, topDocs.totalHits);
             var docs = topDocs.ScoreDocs
@@ -86,6 +91,9 @@ namespace Xpohama.Luceneria.Tests {
         public void IndexerGerTest () {
             using (var indexer = new Indexer(this.Directory)) {
                 // TODO: use the right analyser here; document contains "donaudampfschiff...."
+                indexer.Analyser = new Lucene.Net.Analysis.De.GermanAnalyzer(indexer.Version);
+                // this is missing: indexer.Analyser = new Lucene.Net.Analysis.Compound.HyphenationCompoundWordTokenFilter(indexer.Version);
+                //indexer.Analyser = new Lucene.Net.Analysis.Snowball.SnowballAnalyzer(indexer.Version,"German");
                 IndexTest(indexer, TestDir + "TikaGer.odt", "donau");
 
             }
@@ -109,4 +117,6 @@ namespace Xpohama.Luceneria.Tests {
 
        
     }
+
+    
 }

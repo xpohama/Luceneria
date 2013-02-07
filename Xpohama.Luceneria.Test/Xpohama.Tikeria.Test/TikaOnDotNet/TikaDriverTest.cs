@@ -11,7 +11,7 @@ using System;
 using NUnit.Framework;
 using SpecUnit;
 
-namespace Xpohama.Tikeria.Tests {
+namespace Xpohama.Tikeria.Tests.TikaOnDotNet {
     [TestFixture]
     public class TikaDriverTest {
         private TextExtractor _cut;

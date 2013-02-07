@@ -22,7 +22,7 @@ using Exception = System.Exception;
 using String = System.String;
 using StringBuilder = System.Text.StringBuilder;
 
-namespace Xpohama.Tikeria.Tests {
+namespace Xpohama.Tikeria.Tests.TikaOnDotNet {
    public class TextExtractor {
         private StringWriter _outputWriter;
 

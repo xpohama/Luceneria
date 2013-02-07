@@ -7,8 +7,8 @@ using org.apache.tika.metadata;
 using org.apache.tika.parser;
 using org.apache.tika.sax;
 
-namespace Xpohama.Tikeria.Tests {
-    public class BodyTextExtractor {
+namespace Xpohama.Tikeria {
+    public class TextExtractor {
         protected TransformerHandler CreateTransformerHandler (StringWriter output) {
             var factory = TransformerFactory.newInstance() as SAXTransformerFactory;
             var handler = factory.newTransformerHandler();
@@ -38,7 +38,7 @@ namespace Xpohama.Tikeria.Tests {
 
 
     public static class BodyTextExtractorExtensions {
-        public static string Extract(this BodyTextExtractor ex, string path) {
+        public static string Extract(this TextExtractor ex, string path) {
             return ex.ExtractText(System.IO.File.ReadAllBytes(path));
         }
     }

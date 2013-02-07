@@ -5,11 +5,11 @@ using SpecUnit;
 namespace Xpohama.Tikeria.Tests {
     [TestFixture]
     public class TikaExtractTextTest {
-        BodyTextExtractor _cut { get; set; }
+        TextExtractor _cut { get; set; }
         string TestDir = @"..\..\..\TestData\";
         [SetUp]
         public virtual void SetUp () {
-            _cut = new BodyTextExtractor();
+            _cut = new TextExtractor();
         }
 
         byte[] FromFile(string path) {
