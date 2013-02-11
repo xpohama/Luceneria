@@ -51,58 +51,25 @@
             <summary>
             </summary>
         </member>
-        <member name="T:Lucene.Net.Index.TermVectorEnumerator">
-            <summary>
-            Class to allow for enumerating over the documents in the index to 
-            retrieve the term vector for each one.
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.TermVectorEnumerator.document">
-            <summary>
-            Current document being accessed.
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.TermVectorEnumerator.fieldName">
-            <summary>
-            The field name the vectors are being accessed from.
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.TermVectorEnumerator.reader">
-            <summary>
-            The index reader that the vetors are retreived from.
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.TermVectorEnumerator.emptyVector">
-            <summary>
-            The return value should a document be deleted.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Index.TermVectorEnumerator.#ctor(Lucene.Net.Index.IndexReader,System.String)">
-            <summary>
-            Ctor.
-            </summary>
-            <param name="reader">The index reader used to read the vectors.</param>
-            <param name="field">The name of the field the vectors are read from.</param>
-        </member>
-        <member name="M:Lucene.Net.Index.TermVectorEnumerator.CurrentVector">
-            <summary>
-            Retrieve the current TermFreqVector from the index.
-            </summary>
-            <returns>The current TermFreqVector.</returns>
-        </member>
-        <member name="T:Lucene.Net.Index.EmptyVector">
-            <summary>
-            A simple TermFreqVector implementation for an empty vector for use
-            with a deleted document or a document that does not have the field
-            that is being enumerated.
-            </summary>
-        </member>
         <member name="T:Lucene.Net.Index.FieldParser">
             <summary>
             The type of parser for the value of the term.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:Lucene.Net.Index.FieldEnumerator`1" -->
+        <member name="T:Lucene.Net.Index.FieldEnumerator`1">
+            <summary>
+            <para>Base class for the typed enumerators.</para> 
+            
+            <para>
+            There are five implementations of FieldEnumerator<typeparamref name="T"/> for
+            strings, integers, longs, floats, and doubles. The numeric enumerators support both 
+            standard Field and NumericField implementations.  The string and numeric enumerators
+            have slightly different options, but both should be used within a using statment
+            to close the underlying TermEnum/TermDocs. Refer to the unit tests for usage examples.
+            </para>
+            </summary>
+            <typeparam name="T">The type of data being enumerated.</typeparam>
+        </member>
         <member name="F:Lucene.Net.Index.FieldEnumerator`1.includeDocs">
             <summary>
             Whether the enumerator will include TermDocs.
@@ -147,7 +114,7 @@
             base constructor as generic classes cannot have a parameterized ctor.
             </summary>
             <param name="reader">The index reader to read from.</param>
-            <param name="field">The field to enumerate.</param>
+            <param name="fieldName">The field to enumerate.</param>
             <param name="includeDocs">Whether this enumerator will support TermDocs.</param>
         </member>
         <member name="M:Lucene.Net.Index.FieldEnumerator`1.TryParse(System.String)">
@@ -156,7 +123,6 @@
             and sets the value of Current.
             </summary>
             <param name="s">The encoded string.</param>
-            <param name="?">The value.</param>
             <returns>True if the value was successfully parsed, false if we reached the
             end of encoded values in the fiele and only the tries remain.</returns>
         </member>
@@ -216,6 +182,8 @@
             </summary>
             <param name="termEnum">The TermEnum to wrap.</param>
             <param name="termDocs">The TermDocs to wrap.</param>
+            <param name="field"> </param>
+            <param name="enclosing"> </param>
         </member>
         <member name="M:Lucene.Net.Index.FieldEnumerator`1.TermEnumerator.MoveNext">
             <summary>
@@ -307,7 +275,7 @@
             Ctor.
             </summary>
             <param name="td">Underlying TermDocs.</param>
-            <param name="fieldEnum">Enclosing field enum.</param>
+            <param name="termEnum">Enclosing field enum.</param>
         </member>
         <member name="M:Lucene.Net.Index.TermDocEnumerator.TermDocUsingTermsEnumerator.Seek(Lucene.Net.Index.TermEnum)">
             <summary>
@@ -561,6 +529,92 @@
             <returns>True if the string was parsed, false to inidicate
             the end of usable terms in a numeric field.</returns>
         </member>
+        <member name="T:Lucene.Net.Index.SegmentsGenCommit">
+            <summary>
+            Class that will force an index writer to open an index based
+            on the generation in the segments.gen file as opposed to the
+            highest generation found in a directory listing.
+            
+            A use case for using this IndexCommit when opening an IndexWriter
+            would be if index snapshots (source) are being copied over an 
+            existing index (target) and the source now has a lower generation
+            than the target due to initiating a rebuild of the index. 
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.SegmentsGenCommit.directory">
+            <summary>
+            The index.
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.SegmentsGenCommit.generation">
+            <summary>
+            The generation to use.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Index.SegmentsGenCommit.#ctor(Lucene.Net.Store.Directory)">
+            <summary>
+            Ctor.
+            </summary>
+            <param name="d">The index directory.</param>
+        </member>
+        <member name="M:Lucene.Net.Index.SegmentsGenCommit.ReadDirectory">
+            <summary>
+            Read the segments.gen file to get the generation number.
+            </summary>
+        </member>
+        <member name="P:Lucene.Net.Index.SegmentsGenCommit.SegmentsFileName">
+            <summary>
+            Get the segments_n file for the generation found in the 
+            segments.gen file.
+            </summary>
+            <returns>The segments_n file to use.</returns>
+        </member>
+        <member name="T:Lucene.Net.Index.TermVectorEnumerator">
+            <summary>
+            Class to allow for enumerating over the documents in the index to 
+            retrieve the term vector for each one.
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.TermVectorEnumerator.document">
+            <summary>
+            Current document being accessed.
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.TermVectorEnumerator.fieldName">
+            <summary>
+            The field name the vectors are being accessed from.
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.TermVectorEnumerator.reader">
+            <summary>
+            The index reader that the vetors are retreived from.
+            </summary>
+        </member>
+        <member name="F:Lucene.Net.Index.TermVectorEnumerator.emptyVector">
+            <summary>
+            The return value should a document be deleted.
+            </summary>
+        </member>
+        <member name="M:Lucene.Net.Index.TermVectorEnumerator.#ctor(Lucene.Net.Index.IndexReader,System.String)">
+            <summary>
+            Ctor.
+            </summary>
+            <param name="reader">The index reader used to read the vectors.</param>
+            <param name="field">The name of the field the vectors are read from.</param>
+        </member>
+        <member name="M:Lucene.Net.Index.TermVectorEnumerator.CurrentVector">
+            <summary>
+            Retrieve the current TermFreqVector from the index.
+            </summary>
+            <returns>The current TermFreqVector.</returns>
+        </member>
+        <member name="T:Lucene.Net.Index.EmptyVector">
+            <summary>
+            A simple TermFreqVector implementation for an empty vector for use
+            with a deleted document or a document that does not have the field
+            that is being enumerated.
+            </summary>
+        </member>
         <member name="T:Lucene.Net.Util.Cache.AbstractSegmentCache">
             <summary>
             Root custom cache to allow a factory to retain references to the custom
@@ -597,7 +651,7 @@
             Value creation.
             </summary>
             <param name="reader">The reader.</param>
-            <param name="field">The key to the item under the reader.</param>
+            <param name="key">The key to the item under the reader.</param>
             <returns>The value.</returns>
         </member>
         <member name="M:Lucene.Net.Util.Cache.SegmentCache`1.Warm(Lucene.Net.Index.IndexReader,System.String)">
@@ -650,46 +704,6 @@
             </summary>
             <param name="obj">The object to compare to.</param>
             <returns>True if they are equivalent.</returns>
-        </member>
-        <member name="T:Lucene.Net.Index.SegmentsGenCommit">
-            <summary>
-            Class that will force an index writer to open an index based
-            on the generation in the segments.gen file as opposed to the
-            highest generation found in a directory listing.
-            
-            A use case for using this IndexCommit when opening an IndexWriter
-            would be if index snapshots (source) are being copied over an 
-            existing index (target) and the source now has a lower generation
-            than the target due to initiating a rebuild of the index. 
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.SegmentsGenCommit.directory">
-            <summary>
-            The index.
-            </summary>
-        </member>
-        <member name="F:Lucene.Net.Index.SegmentsGenCommit.generation">
-            <summary>
-            The generation to use.
-            </summary>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentsGenCommit.#ctor(Lucene.Net.Store.Directory)">
-            <summary>
-            Ctor.
-            </summary>
-            <param name="d">The index directory.</param>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentsGenCommit.GetSegmentsFileName">
-            <summary>
-            Get the segments_n file for the generation found in the 
-            segments.gen file.
-            </summary>
-            <returns>The segments_n file to use.</returns>
-        </member>
-        <member name="M:Lucene.Net.Index.SegmentsGenCommit.ReadDirectory">
-            <summary>
-            Read the segments.gen file to get the generation number.
-            </summary>
         </member>
     </members>
 </doc>

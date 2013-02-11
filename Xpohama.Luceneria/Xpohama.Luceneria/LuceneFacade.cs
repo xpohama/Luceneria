@@ -35,10 +35,15 @@ namespace Xpohama.Luceneria.Tests {
 
             var ids = indexer.Searcher
                 .Search(parser.Parse(query), 1000)
+#if LuceneV290
+                .scoreDocs
+                .Select(sd => indexer.Searcher.Doc(sd.doc))
+#else
                 .ScoreDocs
                 .Select(sd => indexer.Searcher.Doc(sd.Doc))
+#endif
                 .Where(doc => doc.GetField(IdFieldName) != null)
-                .Select(doc => doc.GetField(IdFieldName).StringValue)
+                .Select(doc => doc.GetField(IdFieldName).AsString())
                 .Select(id => Guid.Parse(id.Contains(IdSeperator) ?
                               id.Substring(0, id.IndexOf(IdSeperator) + 1) : id));
 

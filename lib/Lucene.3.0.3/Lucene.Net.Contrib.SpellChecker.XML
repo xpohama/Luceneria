@@ -4,6 +4,14 @@
         <name>Lucene.Net.Contrib.SpellChecker</name>
     </assembly>
     <members>
+        <member name="T:SpellChecker.Net.Search.Spell.IDictionary">
+            <summary> A simple interface representing a Dictionary</summary>
+        </member>
+        <member name="M:SpellChecker.Net.Search.Spell.IDictionary.GetWordsIterator">
+            <summary> return all the words present in the dictionary</summary>
+            <returns> Iterator
+            </returns>
+        </member>
         <member name="T:SpellChecker.Net.Search.Spell.StringDistance">
             <summary>
             Interface for string distances.
@@ -19,48 +27,11 @@
             <param name="s2">The second string.</param>
             <returns>a float between 0 and 1 based on how similar the specified strings are to one another.</returns>
         </member>
-        <member name="M:SpellChecker.Net.Search.Spell.JaroWinklerDistance.SetThreshold(System.Single)">
-             <summary>
-            Sets the threshold used to deterMine when Winkler bonus should be used.
-             Set to a negative value to get the Jaro distance.
-             </summary>
-             <param name="threshold">the new value of the threshold</param>
-        </member>
-        <member name="M:SpellChecker.Net.Search.Spell.JaroWinklerDistance.GetThreshold">
+        <member name="P:SpellChecker.Net.Search.Spell.JaroWinklerDistance.Threshold">
             <summary>
-            Returns the current value of the threshold used for adding the Winkler bonus.
-            The default value is 0.7.
+            Gets or sets the current value of the threshold used for adding the Winkler bonus.
+            Set to a negative value to get the Jaro distance. The default value is 0.7.
             </summary>
-            <returns>the current value of the threshold</returns>
-        </member>
-        <member name="T:SpellChecker.Net.Search.Spell.SuggestWord">
-            <summary>  SuggestWord Class, used in suggestSimilar method in SpellChecker class.
-            
-            </summary>
-            <author>  Nicolas Maisonneuve
-            </author>
-        </member>
-        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.score">
-            <summary> the score of the word</summary>
-        </member>
-        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.freq">
-            <summary> The freq of the word</summary>
-        </member>
-        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.string_Renamed">
-            <summary> the suggested word</summary>
-        </member>
-        <member name="T:SpellChecker.Net.Search.Spell.LuceneDictionary">
-            <summary> Lucene Dictionary
-            
-            </summary>
-        </member>
-        <member name="T:SpellChecker.Net.Search.Spell.Dictionary">
-            <summary> A simple interface representing a Dictionary</summary>
-        </member>
-        <member name="M:SpellChecker.Net.Search.Spell.Dictionary.GetWordsIterator">
-            <summary> return all the words present in the dictionary</summary>
-            <returns> Iterator
-            </returns>
         </member>
         <member name="T:SpellChecker.Net.Search.Spell.LevenshteinDistance">
             <summary>
@@ -77,15 +48,64 @@
             <param name="other">The second string.</param>
             <returns>a float between 0 and 1 based on how similar the specified strings are to one another.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:SpellChecker.Net.Search.Spell.SpellChecker" -->
+        <member name="T:SpellChecker.Net.Search.Spell.LuceneDictionary">
+            <summary> 
+            Lucene Dictionary
+            </summary>
+        </member>
+        <member name="M:SpellChecker.Net.Search.Spell.NGramDistance.#ctor(System.Int32)">
+            <summary>
+            Creates an N-Gram distance measure using n-grams of the specified size.
+            </summary>
+            <param name="size">The size of the n-gram to be used to compute the string distance.</param>
+        </member>
+        <member name="M:SpellChecker.Net.Search.Spell.NGramDistance.#ctor">
+            <summary>
+            Creates an N-Gram distance measure using n-grams of size 2.
+            </summary>
+        </member>
+        <member name="T:SpellChecker.Net.Search.Spell.PlainTextDictionary">
+            <summary> Dictionary represented by a file text.
+            <p/>Format allowed: 1 word per line:<br/>
+            word1<br/>
+            word2<br/>
+            word3<br/>
+            
+            </summary>
+            <author>  Nicolas Maisonneuve
+            </author>
+        </member>
+        <member name="T:SpellChecker.Net.Search.Spell.SpellChecker">
+            <summary>  <p>
+            Spell Checker class  (Main class) <br/>
+            (initially inspired by the David Spencer code).
+            </p>
+            
+            <p>Example Usage:</p>
+            
+            <pre>
+            SpellChecker spellchecker = new SpellChecker(spellIndexDirectory);
+            // To index a field of a user index:
+            spellchecker.indexDictionary(new LuceneDictionary(my_lucene_reader, a_field));
+            // To index a file containing words:
+            spellchecker.indexDictionary(new PlainTextDictionary(new File("myfile.txt")));
+            String[] suggestions = spellchecker.suggestSimilar("misspelt", 5);
+            </pre>
+            
+            </summary>
+            <author>  Nicolas Maisonneuve
+            </author>
+            <version>  1.0
+            </version>
+        </member>
         <member name="F:SpellChecker.Net.Search.Spell.SpellChecker.F_WORD">
             <summary> Field name for each word in the ngram index.</summary>
         </member>
-        <member name="F:SpellChecker.Net.Search.Spell.SpellChecker.spellindex">
-            <summary> the spell index</summary>
-        </member>
         <member name="F:SpellChecker.Net.Search.Spell.SpellChecker.bStart">
             <summary> Boost value for start and end grams</summary>
+        </member>
+        <member name="F:SpellChecker.Net.Search.Spell.SpellChecker.spellindex">
+            <summary> the spell index</summary>
         </member>
         <member name="F:SpellChecker.Net.Search.Spell.SpellChecker.searcherLock">
             <summary>
@@ -97,21 +117,21 @@
             Use the given directory as a spell checker index. The directory
             is created if it doesn't exist yet.
             </summary>
-            <param name="gramIndex">the spell index directory</param>
-            <param name="sd">the {@link StringDistance} measurement to use </param>
+            <param name="spellIndex">the spell index directory</param>
+            <param name="sd">the <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/> measurement to use </param>
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.#ctor(Lucene.Net.Store.Directory)">
             <summary>
             Use the given directory as a spell checker index with a
-            {@link LevensteinDistance} as the default {@link StringDistance}. The
+            <see cref="T:SpellChecker.Net.Search.Spell.LevenshteinDistance"/> as the default <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/>. The
             directory is created if it doesn't exist yet.
             </summary>
-            <param name="gramIndex">the spell index directory</param>
+            <param name="spellIndex">the spell index directory</param>
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.SetSpellIndex(Lucene.Net.Store.Directory)">
             <summary>
             Use a different index as the spell checker index or re-open
-            the existing index if <code>spellIndex</code> is the same value
+            the existing index if <c>spellIndex</c> is the same value
             as given in the constructor.
             </summary>
             <param name="spellIndexDir">spellIndexDir the spell directory to use </param>
@@ -120,20 +140,20 @@
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.setStringDistance(SpellChecker.Net.Search.Spell.StringDistance)">
             <summary>
-            Sets the {@link StringDistance} implementation for this
-            {@link SpellChecker} instance.
+            Sets the <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/> implementation for this
+            <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> instance.
             </summary>
-            <param name="sd">the {@link StringDistance} implementation for this
-            {@link SpellChecker} instance.</param>
+            <param name="sd">the <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/> implementation for this
+            <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> instance.</param>
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.GetStringDistance">
             <summary>
-            Returns the {@link StringDistance} instance used by this
-            {@link SpellChecker} instance.
+            Returns the <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/> instance used by this
+            <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> instance.
             </summary>
             <returns>
-            Returns the {@link StringDistance} instance used by this
-            {@link SpellChecker} instance.
+            Returns the <see cref="T:SpellChecker.Net.Search.Spell.StringDistance"/> instance used by this
+            <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> instance.
             </returns>
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.SetAccuracy(System.Single)">
@@ -197,7 +217,7 @@
             <returns> true iff the word exists in the index
             </returns>
         </member>
-        <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.IndexDictionary(SpellChecker.Net.Search.Spell.Dictionary,System.Int32,System.Int32)">
+        <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.IndexDictionary(SpellChecker.Net.Search.Spell.IDictionary,System.Int32,System.Int32)">
             <summary> Index a Dictionary</summary>
             <param name="dict">the dictionary to index</param>
             <param name="mergeFactor">mergeFactor to use when indexing</param>
@@ -205,9 +225,9 @@
             <throws>  IOException </throws>
             <throws>AlreadyClosedException if the Spellchecker is already closed</throws>
         </member>
-        <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.IndexDictionary(SpellChecker.Net.Search.Spell.Dictionary)">
+        <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.IndexDictionary(SpellChecker.Net.Search.Spell.IDictionary)">
             <summary>
-            Indexes the data from the given {@link Dictionary}.
+            Indexes the data from the given <see cref="T:SpellChecker.Net.Search.Spell.IDictionary"/>.
             </summary>
             <param name="dict">dict the dictionary to index</param>
         </member>
@@ -220,24 +240,28 @@
         </member>
         <member name="M:SpellChecker.Net.Search.Spell.SpellChecker.IsClosed">
              <summary>
-             Returns <code>true</code> if and only if the {@link SpellChecker} is
-             closed, otherwise <code>false</code>.
+             Returns <c>true</c> if and only if the <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> is
+             closed, otherwise <c>false</c>.
              </summary>
-             <returns><code>true</code> if and only if the {@link SpellChecker} is
-                     closed, otherwise <code>false</code>.
+             <returns><c>true</c> if and only if the <see cref="T:SpellChecker.Net.Search.Spell.SpellChecker"/> is
+                     closed, otherwise <c>false</c>.
             </returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:SpellChecker.Net.Search.Spell.PlainTextDictionary" -->
-        <member name="M:SpellChecker.Net.Search.Spell.NGramDistance.#ctor(System.Int32)">
-            <summary>
-            Creates an N-Gram distance measure using n-grams of the specified size.
+        <member name="T:SpellChecker.Net.Search.Spell.SuggestWord">
+            <summary>  SuggestWord Class, used in suggestSimilar method in SpellChecker class.
+            
             </summary>
-            <param name="size">The size of the n-gram to be used to compute the string distance.</param>
+            <author>  Nicolas Maisonneuve
+            </author>
         </member>
-        <member name="M:SpellChecker.Net.Search.Spell.NGramDistance.#ctor">
-            <summary>
-            Creates an N-Gram distance measure using n-grams of size 2.
-            </summary>
+        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.score">
+            <summary> the score of the word</summary>
+        </member>
+        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.freq">
+            <summary> The freq of the word</summary>
+        </member>
+        <member name="F:SpellChecker.Net.Search.Spell.SuggestWord.termString">
+            <summary> the suggested word</summary>
         </member>
         <member name="T:SpellChecker.Net.Search.Spell.TRStringDistance">
             <summary> Edit distance  class</summary>

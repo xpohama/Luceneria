@@ -13,7 +13,9 @@ namespace Xpohama.Luceneria {
             // source: Lucene in Action, page ??
             var term = stream.AddAttribute<TermAttribute>();
             while (stream.IncrementToken()) {
+#if LuceneV303
                 Trace.WriteLine("[" + term.Term + "] ");
+#endif
             }
         }
     }
