@@ -29,7 +29,7 @@ namespace Xpohama.Luceneria {
                     _writer = new IndexWriter(
                                     this.Directory,
                                     this.Analyser,
-                                    true,
+                                    false,
                                     IndexWriter.MaxFieldLength.UNLIMITED);
                 }
                 return _writer;
